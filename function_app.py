@@ -83,3 +83,30 @@ def standard_deviation(req: func.HttpRequest) -> func.HttpResponse:
              "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
              status_code=200
         )
+    
+@app.route(route="percentile")
+def percentile(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+
+    body = req.get_body()
+
+    if not body:
+        try:
+            req_body = req.get_json()
+            data = json.loads(req_body)
+        except ValueError:
+            pass
+
+    data = json.loads(body)
+
+    std = numpy.std(data)
+
+    percentile = numpy.percentile(data, 100)
+
+    if std:
+        return func.HttpResponse(f"The percentile is: {percentile}")
+    else:
+        return func.HttpResponse(
+             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
+             status_code=200
+        )
